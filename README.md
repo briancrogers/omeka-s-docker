@@ -1,5 +1,11 @@
 # Omeka-S in Docker containers
 
+## Checkout the 1\_3\_0 branch after cloning this repository
+
+```
+$ git checkout 1_3_0
+```
+
 ## Building the docker image before running composer
 
 ```
