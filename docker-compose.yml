@@ -29,7 +29,7 @@ services:
   omeka:
     depends_on:
       - mariadb
-    image: dodeeric/omeka-s:latest 
+    image: brian/omekasdocker
     restart: always
     networks:
       - network1 
@@ -39,6 +39,7 @@ services:
       - mariadb:db
     volumes:
       - omeka:/var/www/html/volume
+      - "./themes:/var/www/html/themes"
 
 volumes:
   mariadb:

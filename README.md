@@ -1,5 +1,36 @@
 # Omeka-S in Docker containers
 
+## Building the docker image before running composer
+
+```
+$ docker build . -t brian/omekasdocker
+```
+
+# Unzip themes into the themes directory
+
+```
+$ unzip omeka-s-1.3.0.zip omeka-s/themes/*
+$ mv omeka-s/themes/default themes/
+$ unzip thedaily-v1.4.0.zip -d themes
+$ unzip centerrow-v1.4.0.zip -d themes
+$ unzip cozy-v1.3.1.zip -d themes
+```
+
+# Building the docker image of the gulp css command
+
+Clone the repository https://github.com/briancrogers/gulpcss-docker.git and run:
+```
+$ docker build . -t brian/gulpcss
+```
+
+# Compiling a theme
+
+```
+$ cd themes/default
+$ vi assets/sass/_base.scss
+$ docker run -ti ${PWD}:/opt/omekatheme
+```
+
 ## Launch the containers
 
 Install Docker and Docker-compose on your host (can be a physical or virtual machine). 
