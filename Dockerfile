@@ -46,6 +46,9 @@ RUN tar zxf /var/www/${TAR_FILE_NAME}.tar.gz -C /var/www/ \
 && rm -rf /var/www/html/ \
 && mv /var/www/omeka-s-bugfix-7.2-rebase-1.3.0/ /var/www/html/
 
+COPY ./repos.zip /var/www/
+RUN unzip -q /var/www/repos.zip -d /var/www/html/
+
 COPY ./imagemagick-policy.xml /etc/ImageMagick/policy.xml
 COPY ./.htaccess /var/www/html/.htaccess
 
@@ -74,10 +77,111 @@ RUN ln -s /var/www/html/volume/config/database.ini /var/www/html/config/database
 && chmod 600 /var/www/html/.htaccess
 
 RUN sed -i '/"type": "vcs"/a "no-api": true,' composer.json
-RUN composer update \
-&& composer require "kokspflanze/zfc-twig" "2.2.0" \
+# Add path repositories
+RUN sed -i '$d' composer.json \
+&& sed -i '$d' composer.json \
+&& sed -i '$d' composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/annotation-studio"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/auto-complete"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/bookmarking"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/capture-model-import"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/default-theme"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/elucidate"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/elucidate-proxy"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/extract-tagged-strings"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/google-analytics"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/iiif-php"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/iiif-storage"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/madoc-crowd-sourcing-theme"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/omeka-i18n-module"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/public-user"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/resource-provider"' >> composer.json \
+&& echo '        },' >> composer.json \
+&& echo '        {' >> composer.json \
+&& echo '            "type": "path",' >> composer.json \
+&& echo '            "url": "repos/shared-library"' >> composer.json \
+&& echo '        }' >> composer.json \
+&& echo '    ]' >> composer.json \
+&& echo '}' >> composer.json
+
+RUN composer update "friendsofphp/php-cs-fixer" \
+&& composer require "digirati/omeka-shared"
+
+#RUN composer require "friendsofphp/php-cs-fixer" "2.15.1" \
+#&& composer require "zendframework/zend-view" "2.10.0" \
+#&& composer update \
+RUN composer require "kokspflanze/zfc-twig" \
+&& composer require "symfony/event-dispatcher" "^3.3"\
+&& composer require "dlcs/iiif-php" "1.2.0" \
+&& composer require "digirati/omeka-elucidate-proxy-module" "1.0.0" \
+&& composer require "digirati/omeka-iiif-storage-module" "1.0.0" \
 && composer install
 
+RUN composer require "digirati/omeka-resource-provider-module" \
+&& composer require "digirati/omeka-public-user-module"
+
+RUN composer require "digirati/omeka-elucidate-module" \
+&& composer require "digirati/omeka-capture-model-import-module"
+
+RUN composer require "zendframework/zend-diactoros" "^1.0"
+
+RUN composer require "digirati/omeka-auto-complete-module" \
+&& composer require "digirati/omeka-annotation-studio-module"
+
+RUN composer require "digirati-co-uk/omeka-bookmarking-module" \
+&& composer require "digirati/omeka-capture-model-import-module"
+
+RUN composer require "digirati/omeka-google-analytics-module" \
+&& composer require "digirati/madoc-crowd-sourcing-theme"
+
+RUN composer require "digirati/omeka-i18n-module"
+
+#&& composer require "dlcs/elucidate-php" \
 VOLUME /var/www/html/volume/
 
 CMD ["apache2-foreground"]
