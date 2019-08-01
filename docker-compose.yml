@@ -29,7 +29,9 @@ services:
   omeka:
     depends_on:
       - mariadb
-    image: brian/omekasdocker
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     networks:
       - network1 
