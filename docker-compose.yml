@@ -2,7 +2,7 @@ version: "2"
 
 services:
   mariadb:
-    image: mariadb:latest 
+    image: mariadb:10.1.41-bionic
     restart: always
     networks:
       - network1 
